@@ -8,7 +8,6 @@ on:
 permissions:
   contents: read
   security-events: write
-  actions: read
 
 jobs:
   test:
@@ -51,6 +50,8 @@ jobs:
 
     - name: trivy FS mode
       uses: aquasecurity/trivy-action@0.33.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         scan-type: 'fs'
         scan-ref: '.'
