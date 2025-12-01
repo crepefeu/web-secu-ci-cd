@@ -15,6 +15,7 @@ Esteban RODRIGUEZ
 ![Completed CD run](image-1.png)
 ![Docker Hub Image](image-2.png)
 ![Trivy Code Scan Results](image-3.png)
+![After updating the dependencies](image-4.png)
 
 ## Code Blocks For The Created Files
 
