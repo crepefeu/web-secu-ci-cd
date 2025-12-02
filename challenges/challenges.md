@@ -103,3 +103,17 @@
 ## Root-me | [JWT - Jeton révoqué](https://www.root-me.org/fr/Challenges/Web-Serveur/JWT-Jeton-revoque)
 
 ### Étapes :
+
+- Se connecter grâce au login contenu dans le code source du challenge et récupérer le token
+- Essayer d'accéder à la page admin via le GET -> erreur Missing Authorization Header
+- Essai d'ajouter le token obtenu via le login dans le Header Authorization de la page admin -> on obtient l'erreur Token is revoked en réponse
+- On remarque grâce au code source qu'un token est considéré revoked quand il est présent dans la blacklist. Un token est ajouté à la blacklist dès qu'il est créé via l'endpoint de login -> il faut trouver un moyen d'éviter l'ajout à la blacklist ou que le token soit considéré comme étant dans la blacklist
+- Il n'y a pas de moyen d'empêcher l'ajout du token à la blacklist
+- On ne peut pas modifier les deux premières parties du jwt sans le rendre invalide, il faut donc trouver un moyen d'avoir un token différent mais toujours valide
+- Utiliser le padding base64 des JWT au niveau de la signature -> récupérer un token via l'endpoint de login puis l'ajouter au header Authorization du endpoint admin en ajoutant un = à la fin
+
+### Recommandations :
+
+- **Références :** https://curity.io/resources/learn/jwt-best-practices/
+
+- Éviter d'utiliser une simple comparaison de string pour vérifier la validité d'un JWT mais se baser plutôt sur l'id du JWT
