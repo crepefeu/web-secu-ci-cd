@@ -78,3 +78,28 @@
 - Éviter de mettre directement les valeurs saisies par l'utilisateur dans les requêtes SQL et utiliser plutôt des requêtes préparées.
 - Mettre en place une whiteliste pour les saisies utilisateur si possible
 - Éviter d'afficher les messages d'erreur SQL détaillés pour limiter la divulgation d'informations sur la structure de la base de données.
+
+## Root-me | [Injection de commande - Contournement de filtre](https://www.root-me.org/fr/Challenges/Web-Serveur/Injection-de-commande-Contournement-de-filtre)
+
+### Étapes :
+
+- Tests de différentes syntaxes pour injecter d'autres commandes dans le formulaire du ping
+  - Certains essais donnaient une syntax error
+  - Syntaxe pour bypass le filtre trouvée : 127.0.0.1' && cat index.php && '
+- La requête ne donne aucune autre réponse que ping ok même avec un echo simple
+- Récupérer directement le contenu du fichier index.php via une commande curl à la place d'essayer de l'afficher sur la page
+- On remarque que le mot de passe est contenu dans un fichier .passwd
+- Récupérer le fichier avec le mot de passe de la même manière que le fichier index.php
+
+### Recommandations :
+
+- **Références :**
+
+  - https://owasp.org/www-community/attacks/Command_Injection
+
+- Éviter de mettre directement la saisie utilisateur dans la commande
+- Assainir la donnée saisie par l'utilisateur
+
+## Root-me | [JWT - Jeton révoqué](https://www.root-me.org/fr/Challenges/Web-Serveur/JWT-Jeton-revoque)
+
+### Étapes :
