@@ -115,11 +115,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install bandit
 
-    - name: bandit scan (SARIF)
+    - name: bandit scan (JSON)
       run: |
-        bandit -r . -f sarif -o bandit-results.sarif || true
-
-    - name: upload bandit sarif
-      uses: github/codeql-action/upload-sarif@v4
-      with:
-        sarif_file: 'bandit-results.sarif'
+        bandit -r . -f json -o bandit-results.json || true
