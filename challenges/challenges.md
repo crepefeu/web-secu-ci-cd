@@ -40,20 +40,6 @@
 - Essayer d'éviter dans la mesure du possible l'inclusion de fichier avec une saisie accessible par l'utilisateur
 - Si jamais on ne peut pas éviter l'inclusion, il faut absolument mettre en place une white liste contenant tous les fichiers autorisés à être inclus et refuser les requêtes des fichiers n'étant pas dans cette liste.
 
-## Root-me | [CSRF Contournement de jeton](http://challenge01.root-me.org/web-client/ch23/)
-
-### Étapes :
-
-- Se connecter
-- Inspection du formulaire d'update du profile : en regardant dans le code source du form, on remarque qu'il y a un input caché contenant le token CSRF, la checkbox permettant de passer le compte en vérifié est disabled côté HTML et on a l'action du formulaire.
-- Différents tests en interceptant la reqûete de l'update profile et de modifier le payload avec burpsuite
-  - Ajouter un champ status à true -> message "You're not an admin" en réponse
-  - Enlever le champ token et ajouter un champ status à true -> message "You're not an admin" en réponse
-  - Utilisation de la valeur du token présent dans le formulaire de contact à la place du token du formulaire d'update -> message "You're not an admin" en réponse
-    /!\ pas fini /!\
-
-### Recommandations :
-
 ## PortSwigger | [CSRF where token is not tied to user session](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-not-tied-to-user-session)
 
 ### Étapes :
@@ -181,6 +167,7 @@
 ## Root-me | [XSS Stockée 2](https://www.root-me.org/fr/Challenges/Web-Client/XSS-Stockee-2)
 
 ### Étapes :
+
 - Ouvrir le site avec Burpsuite
 - Envoyer un message via le formulaire
 - Regarder la requête envoyée dans Burpsuite
@@ -200,6 +187,7 @@
 - On accède à la page admin et on récupère le mot de passe pour valider le challenge
 
 ### Recommandations :
+
 - **Références :**
 
   - https://owasp.org/www-community/attacks/xss/
@@ -212,6 +200,7 @@
 ## Root-me | [API Mass Assignment](https://www.root-me.org/fr/Challenges/Web-Serveur/API-Mass-Assignment?lang=fr)
 
 ### Étapes :
+
 - Se rendre sur le swagger de l'API [Swagger UI Du Challenge](http://challenge01.root-me.org:59090)
 - Effectuer la requête pour créer un nouvel utilisateur [Requête de création](screenshots/api-mass-assignment/create-user-request.png)
 - Effectuer la requête pour se connecter avec l'utilisateur créé et récupérer le cookie d'authentification[Requête de login](screenshots/api-mass-assignment/login-request-and-cookie.png)
@@ -225,7 +214,9 @@
 - On obtient le flag pour valider le challenge.
 
 ### Recommandations :
+
 - **Références :**
+
   - https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html
 
 - Mettre en place une whitelist des propriétés pouvant être mises à jour via les API
