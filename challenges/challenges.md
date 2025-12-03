@@ -180,10 +180,7 @@
 
 ## Root-me | [XSS Stockée 2](https://www.root-me.org/fr/Challenges/Web-Client/XSS-Stockee-2)
 
-###
-
-Étapes :
-
+### Étapes :
 - Ouvrir le site avec Burpsuite
 - Envoyer un message via le formulaire
 - Regarder la requête envoyée dans Burpsuite
@@ -200,4 +197,36 @@
 - Ce payload permet d'envoyer les cookies de l'utilisateur à une URL externe (webhook.site dans notre cas afin de les récupérer facilement) voir image [ici](screenshots/xss-stockee-2/repeated-request.png)
 - On envoie la requête et on récupère les cookies dans webhook.site
 - Il ne reste plus qu'à s'ajouter le cookie ADMIN_COOKIE avec la valeur récupéré pour se connecter en tant qu'admin (directement dans le navigateur par exemple) voir image [ici](screenshots/xss-stockee-2/using-the-admin-cookie.png)
-- On accède à la page admin et on récupère le mot de passe
+- On accède à la page admin et on récupère le mot de passe pour valider le challenge
+
+### Recommandations :
+- **Références :**
+
+  - https://owasp.org/www-community/attacks/xss/
+  - https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
+
+- Ne pas stocker des données sensibles dans des cookies accessibles en JavaScript
+- Utiliser l'attribut HttpOnly pour les cookies sensibles afin d'empêcher l'accès via JavaScript
+- Mettre en place une validation et un encodage approprié des données avant de les afficher dans la page web
+
+## Root-me | [API Mass Assignment](https://www.root-me.org/fr/Challenges/Web-Serveur/API-Mass-Assignment?lang=fr)
+
+### Étapes :
+- Se rendre sur le swagger de l'API [Swagger UI Du Challenge](http://challenge01.root-me.org:59090)
+- Effectuer la requête pour créer un nouvel utilisateur [Requête de création](screenshots/api-mass-assignment/create-user-request.png)
+- Effectuer la requête pour se connecter avec l'utilisateur créé et récupérer le cookie d'authentification[Requête de login](screenshots/api-mass-assignment/login-request-and-cookie.png)
+- Effectuer la requête pour récupérer les informations de l'utilisateur connecté, on constate que la propriété status est "guest". [Requête get user info](screenshots/api-mass-assignment/get-user-info-request.png)
+- On effectue la requête pour récupérer le "secret flag" mais on obtient une erreur d'autorisation "Unauthorized, user is not admin.". [Requête get secret flag](screenshots/api-mass-assignment/get-secret-flag-request.png)
+- Le statut de l'utilisateur est "guest", on va essayer de le passer en "admin" comme nous l'informe la requête précédente via une requête de mise à jour des informations utilisateur [Requête update user info](screenshots/api-mass-assignment/update-user-info-request.png)
+- Il n'existe pas de requête spécifique pour mettre à jour le statut de l'utilisateur dans le swagger mais l'on sait que la méthode HTTP PUT est normalement utilisée pour mettre à jour des ressources.
+- On démarre Postman et on tente d'effectuer une requête PUT sur l'endpoint /api/user en ajoutant la propriété status avec la valeur "admin" dans le corps de la requête ET en utilisant notre cookie récupéré précédemment. ![Put Request Headers](screenshots/api-mass-assignment/put-request-headers.png) ![Put Request Body](screenshots/api-mass-assignment/put-request-body.png)
+- On refait une requête GET sur l'endpoint /api/user pour vérifier que le statut a bien été mis à jour. ![Requête pour récupérer les infos utilisateurs après update](screenshots/api-mass-assignment/get-user-info-request-after-put.png)
+- On constate que le statut est bien passé en "admin", on peut maintenant à nouveau tenter de récupérer le secret flag en effectuant une requête GET sur l'endpoint /api/secret. ![Résultat de la requête pour récupérer le flag](screenshots/api-mass-assignment/get-flag-request-after-update.png)
+- On obtient le flag pour valider le challenge.
+
+### Recommandations :
+- **Références :**
+  - https://cheatsheetseries.owasp.org/cheatsheets/Mass_Assignment_Cheat_Sheet.html
+
+- Mettre en place une whitelist des propriétés pouvant être mises à jour via les API
+- Valider et assainir les données reçues via les API avant de les utiliser pour mettre à jour des ressources
