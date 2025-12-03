@@ -118,3 +118,9 @@ jobs:
     - name: bandit scan (JSON)
       run: |
         bandit -r . -f json -o bandit-results.json || true
+
+    - name: upload bandit report
+      uses: actions/upload-artifact@v4
+      with:
+        name: bandit-results
+        path: bandit-results.json
