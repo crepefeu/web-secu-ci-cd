@@ -139,3 +139,63 @@
 - On envoie la requête et on récupère les cookies dans webhook.site
 - Il ne reste plus qu'à s'ajouter le cookie ADMIN_COOKIE avec la valeur récupéré pour se connecter en tant qu'admin (directement dans le navigateur par exemple) voir image [ici](screenshots/xss-stockee-2/using-the-admin-cookie.png)
 - On accède à la page admin et on récupère le mot de passe
+
+## PortSwigger | [CSRF where Referer validation depends on header being present](https://portswigger.net/web-security/csrf/bypassing-referer-based-defenses/lab-referer-validation-depends-on-header-being-present)
+
+### Étapes :
+
+- Connexion avec les identifiants fournis 
+- On accède à la page permettant de modifier l’email
+- On intercepte la requête 
+- On observe qu'il n’existe aucun token CSRF dans le formulaire
+- Seule protection -> vérification du header Referer
+- On teste plusieurs variations :
+    - Modif le contenu du Referer -> refusé
+    - Fournir un Referer externe -> refusé
+    - Supprimer complètement le header Referer -> accepté
+- On en déduit que si Referer présent -> vérification origine sinon -> aucune vérification
+- Dans l’exploit server, on crée un formulaire contenant uniquement le champ email
+- On store l’exploit puis on le délivre
+- Plus aucun contrôle -> modification de l’email -> lab validé
+
+### Recommandations :
+
+- **Références :**
+
+  - https://owasp.org/www-community/SameSite
+  - https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern
+
+- Implémenter un véritable token CSRF synchronisé avec la session
+- Configurer le cookie de session avec Strict
+
+## PortSwigger | [CSRF where token is not tied to user session](https://portswigger.net/web-security/csrf/bypassing-token-validation/lab-token-not-tied-to-user-session)
+
+### Étapes :
+
+- Connexion avec les identifiants fournis 
+- On accède à la page permettant de modifier l’email
+- On intercepte la requête 
+- On identifie un paramètre csrf dans le corps de la requête POST.
+- On tente alors de :
+    - rejouer la requête sans changer de session,
+    - rejouer la requête en étant déconnecté,
+    - rejouer la requête dans une nouvelle session avec un autre utilisateur.
+- On voit que le même token fonctionne dans tous les cas
+- Dans l’exploit server, on crée un formulaire qui contient :
+    - le token CSRF récupéré
+    - une nouvelle adresse email
+- On store l’exploit puis on le délivre
+- Le mail est changé -> lab validé
+
+### Recommandations :
+
+- **Références :**
+
+  - https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
+  - https://owasp.org/www-community/attacks/csrf
+
+- Associer chaque token CSRF à la session utilisateur
+- Générer des tokens CSRF robustes et imprédictibles
+
+
+
